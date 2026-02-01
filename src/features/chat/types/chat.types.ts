@@ -1,35 +1,37 @@
-export type ChatUser = {
-  id: string;
-  name: string;
-  avatarUrl?: string;
+import { FieldValue, Timestamp } from "firebase/firestore";
+
+export type RoomType = "private" | "group";
+
+export type ParticipantPreview = {
+  name: string | null;
+  avatar: string | null;
 };
+export type ParticipantsInfo = Record<string, ParticipantPreview>;
+
+export type MessageType = "text" | "image" | "file" | "system";
+export interface LastMessage {
+  text: string;
+  senderId: string;
+  senderName: string;
+  createdAt: Timestamp | FieldValue;
+  type: MessageType;
+}
 
 export type ChatRoom = {
   id: string;
-  title: string;
-  participantIds: string[];
-  unreadCount: number;
-  lastMessagePreview?: string;
-  lastMessageAt?: string;
+  type: RoomType;
+  participants: string[];
+  participantsInfo: ParticipantsInfo;
+  participantsCount: number;
+  createdAt: Timestamp | FieldValue;
+  lastMessage: LastMessage;
+  lastMessageAt: Timestamp | FieldValue;
 };
 
-export type ChatMessageBase = {
+export interface Message {
   id: string;
-  roomId: string;
-  createdAt: string;
-};
-
-export type ChatUserMessage = ChatMessageBase & {
-  kind: "user";
   senderId: string;
   text: string;
-};
-
-export type ChatSystemMessage = ChatMessageBase & {
-  kind: "system";
-  text: string;
-};
-
-export type ChatMessage = ChatUserMessage | ChatSystemMessage;
-
-
+  type: MessageType;
+  createdAt: Timestamp | FieldValue;
+}
